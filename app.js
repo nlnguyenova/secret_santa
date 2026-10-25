@@ -1,14 +1,70 @@
-// GitHub Pages-only Secret Santa. No server or extra account required.
-const canvas=document.querySelector('#snow'),ctx=canvas.getContext('2d');let flakes=[],w=0,h=0;const reduce=matchMedia('(prefers-reduced-motion: reduce)').matches;
-function resize(){const d=Math.min(devicePixelRatio||1,2);w=innerWidth;h=innerHeight;canvas.width=w*d;canvas.height=h*d;canvas.style.width=w+'px';canvas.style.height=h+'px';ctx.setTransform(d,0,0,d,0,0);flakes=Array.from({length:reduce?0:Math.min(85,Math.floor(w/15))},()=>({x:Math.random()*w,y:Math.random()*h,r:Math.random()*2.2+.6,s:Math.random()*.65+.25,dr:(Math.random()-.5)*.35,a:Math.random()*.55+.2}));}
-function snow(){ctx.clearRect(0,0,w,h);for(const f of flakes){ctx.beginPath();ctx.fillStyle=`rgba(255,246,226,${f.a})`;ctx.arc(f.x,f.y,f.r,0,Math.PI*2);ctx.fill();f.y+=f.s;f.x+=f.dr+Math.sin(f.y/55)*.12;if(f.y>h+5){f.y=-5;f.x=Math.random()*w}if(f.x< -5)f.x=w+5;if(f.x>w+5)f.x=-5}if(!reduce)requestAnimationFrame(snow)}addEventListener('resize',resize);resize();snow();
-const $=s=>document.querySelector(s),letter=$('#letter'),form=$('#draw-form'),message=$('#message'),results=$('#results'),list=$('#assignment-list'),reveal=$('#reveal-panel');let generatedLinks=[];
-function encode(data){const bytes=new TextEncoder().encode(JSON.stringify(data));let binary='';bytes.forEach(b=>binary+=String.fromCharCode(b));return btoa(binary).replace(/\+/g,'-').replace(/\//g,'_').replace(/=+$/,'')}
-function decode(str){str=str.replace(/-/g,'+').replace(/_/g,'/');while(str.length%4)str+='=';const binary=atob(str),bytes=Uint8Array.from(binary,c=>c.charCodeAt(0));return JSON.parse(new TextDecoder().decode(bytes))}
-function shuffle(a){for(let i=a.length-1;i>0;i--){const j=Math.floor(Math.random()*(i+1));[a[i],a[j]]=[a[j],a[i]]}return a}
-function makeDraw(names){if(names.length<2)throw Error('Please enter at least two participants.');if(names.length>100)throw Error('Please enter no more than 100 participants.');const normalized=names.map(n=>n.toLocaleLowerCase());if(new Set(normalized).size!==names.length)throw Error('Each participant needs a unique name (names are checked without case sensitivity).');let recipients=[...names];for(let attempt=0;attempt<10000;attempt++){shuffle(recipients);if(recipients.every((name,i)=>name!==names[i]))return names.map((giver,i)=>({giver,recipient:recipients[i]}))}throw Error('Could not create a valid draw. Please try again.')}
-function setReveal(name){document.body.classList.add('reveal-only');$('#paper-kicker').textContent='A little secret, just for you';$('#paper-heading').classList.add('hidden');$('#paper-copy').classList.add('hidden');form.classList.add('hidden');results.classList.add('hidden');message.textContent='';$('#recipient-name').textContent=name;reveal.classList.remove('hidden');letter.classList.add('open');}
-const params=new URLSearchParams(location.search);if(params.has('gift')){try{const data=decode(params.get('gift'));if(typeof data.recipient!=='string'||!data.recipient)throw Error('Invalid link');setReveal(data.recipient)}catch{message.textContent='This reveal link is not valid. Please ask the organiser to send it again.';letter.classList.add('open')}}
-form.addEventListener('submit',e=>{e.preventDefault();message.textContent='';results.classList.add('hidden');list.replaceChildren();try{const names=$('#names').value.split(/\r?\n/).map(n=>n.trim()).filter(Boolean);const assignments=makeDraw(names);const base=location.href.split('#')[0].split('?')[0];generatedLinks=assignments.map(a=>({...a,url:base+'?gift='+encode({recipient:a.recipient})}));generatedLinks.forEach(a=>{const card=document.createElement('div');card.className='assignment-card';const who=document.createElement('strong');who.textContent=a.giver;const recipient=document.createElement('span');recipient.textContent=' → '+a.recipient;const copy=document.createElement('button');copy.type='button';copy.className='copy-link';copy.textContent='Copy reveal link';copy.addEventListener('click',async()=>{try{await navigator.clipboard.writeText(a.url);copy.textContent='Copied!'}catch{prompt('Copy this private link and send it to '+a.giver,a.url)}});card.append(who,recipient,copy);list.append(card)});results.classList.remove('hidden');letter.classList.add('open');$('#paper-kicker').textContent=$('#group-name').value.trim()||'Your Secret Santa draw';$('#paper-heading').textContent='The draw is ready!';$('#paper-copy').textContent='Keep each reveal link private and send it to the matching person.'}catch(err){message.textContent=err.message||'Something went wrong. Please try again.';letter.classList.add('open')}});
-$('#copy-all').addEventListener('click',async()=>{const text=generatedLinks.map(a=>`${a.giver}: ${a.url}`).join('\n');try{await navigator.clipboard.writeText(text);$('#copy-all').textContent='All links copied!'}catch{prompt('Copy these links and send each one privately:',text)}});
-$('#new-draw').addEventListener('click',()=>{if(!confirm('Start over? This will clear the current results from this page.'))return;history.replaceState(null,'',location.pathname);generatedLinks=[];list.replaceChildren();results.classList.add('hidden');reveal.classList.add('hidden');form.classList.remove('hidden');$('#paper-kicker').textContent='The organiser’s desk';$('#paper-heading').innerHTML='Let the magic<br>begin.';$('#paper-copy').textContent='Add everyone’s names, then make your Secret Santa draw.';message.textContent='';letter.classList.remove('open');});
+// =====================================
+// SECRET SANTA — TEST PARTICIPANTS
+// =====================================
+
+const assignments = {
+  "Alice Test": "Clara Test",
+  "Ben Test": "Emma Test",
+  "Clara Test": "David Test",
+  "David Test": "Alice Test",
+  "Emma Test": "Ben Test"
+};
+
+// =====================================
+// ENVELOPE & REVEAL
+// =====================================
+
+// Find the elements on the page
+const envelope = document.querySelector(".envelope");
+const form = document.querySelector("form");
+const nameInput = document.querySelector(
+  'input[name="name"], #name, #username, input[type="text"]'
+);
+const revealButton = document.querySelector("button");
+const result = document.querySelector(
+  "#result, #recipient, .result, .recipient"
+);
+
+// Reveal the envelope when clicked
+if (envelope) {
+  envelope.addEventListener("click", () => {
+    envelope.classList.toggle("open");
+  });
+}
+
+// Handle the participant's name
+function revealAssignment(event) {
+  if (event) event.preventDefault();
+
+  if (!nameInput) {
+    alert("Name input not found. Check the input element in index.html.");
+    return;
+  }
+
+  const enteredName = nameInput.value.trim().toLowerCase();
+
+  const matchedName = Object.keys(assignments).find(
+    name => name.toLowerCase() === enteredName
+  );
+
+  if (!matchedName) {
+    alert("Name not found. Please enter your name exactly as provided.");
+    return;
+  }
+
+  const recipient = assignments[matchedName];
+
+  if (result) {
+    result.textContent = `You're buying a gift for ${recipient}!`;
+    result.style.display = "block";
+  } else {
+    alert(`You're buying a gift for ${recipient}!`);
+  }
+}
+
+// Listen for form submission or button click
+if (form) {
+  form.addEventListener("submit", revealAssignment);
+} else if (revealButton) {
+  revealButton.addEventListener("click", revealAssignment);
+}
