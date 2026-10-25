@@ -29,9 +29,8 @@ const assignments = {
 const aliases = {
   "Ondřej": "Ondrej",
   "Ondřej": "Ondra",
-  "Luděk": "Ludek", 
+  "Ludek": "Luděk", 
   "Ludvík": "Ludvik",
-  "Luděk": "Ludek",
   "Svetlana": "Světlana",
   "Eva": "Fany",
 };
