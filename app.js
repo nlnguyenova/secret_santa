@@ -1,8 +1,5 @@
 
-// ==========================================
-// SECRET SANTA — TEST ASSIGNMENTS
-// Change these names when you're ready!
-// ==========================================
+// SECRET SANTA ASSIGNMENTS
 
 const assignments = {
   "Janek": "Ludek",
@@ -28,93 +25,108 @@ const assignments = {
 
 const aliases = {
   "Ondřej": "Ondrej",
-  "Ondřej": "Ondra",
-  "Ludek": "Luděk", 
+  "Ondra": "Ondrej",
+  "Ludek": "Ludek",
+  "Luděk": "Ludek",
   "Ludvík": "Ludvik",
-  "Svetlana": "Světlana",
-  "Eva": "Fany",
+  "Svetlana": "Svetlana",
+  "Světlana": "Svetlana",
+  "Fany": "Eva"
 };
-};
 
-// ==========================================
-// ENVELOPE
-// ==========================================
-
-const letter = document.getElementById("letter");
-const envelope = document.getElementById("envelope");
-const revealForm = document.getElementById("reveal-form");
-
-if (envelope && letter) {
-  envelope.addEventListener("click", () => {
-    letter.classList.add("open");
-  });
+function normalizeName(name) {
+  return name
+    .normalize("NFD")
+    .replace(/[\u0300-\u036f]/g, "")
+    .trim()
+    .toLowerCase()
+    .replace(/\s+/g, " ");
 }
 
-// ==========================================
-// REVEAL THE ASSIGNMENT
-// ==========================================
+document.addEventListener("DOMContentLoaded", () => {
+  const letter = document.getElementById("letter");
+  const envelope = document.getElementById("envelope");
+  const form = document.getElementById("reveal-form");
+  const input = document.getElementById("participant-name");
+  const message = document.getElementById("message");
+  const resultPanel = document.getElementById("reveal-panel");
+  const recipientName = document.getElementById("recipient-name");
+  const heading = document.getElementById("paper-heading");
+  const copy = document.getElementById("paper-copy");
 
-if (revealForm) {
-  revealForm.addEventListener("submit", (event) => {
-    event.preventDefault();
+  // Open the envelope
+  if (envelope && letter) {
+    envelope.addEventListener("click", () => {
+      letter.classList.add("open");
+    });
+  }
 
-    const input = document.getElementById("participant-name");
-    const message = document.getElementById("message");
-    const resultPanel = document.getElementById("reveal-panel");
-    const recipientName = document.getElementById("recipient-name");
-    const heading = document.getElementById("paper-heading");
-    const copy = document.getElementById("paper-copy");
+  // Reveal the assignment
+  if (form) {
+    form.addEventListener("submit", (event) => {
+      event.preventDefault();
 
-    const enteredName = input.value.trim().toLowerCase();
+      const enteredName = normalizeName(input.value);
 
-    const matchedName = Object.keys(assignments).find(
-      name => name.toLowerCase() === enteredName
-    );
+      const aliasEntry = Object.entries(aliases).find(
+        ([alias]) => normalizeName(alias) === enteredName
+      );
 
-    if (!matchedName) {
-      message.textContent =
-        "We couldn't find that name. Please check the spelling and try again.";
-      resultPanel.classList.add("hidden");
-      return;
-    }
+      const canonicalName = aliasEntry
+        ? aliasEntry[1]
+        : input.value.trim();
 
-    recipientName.textContent = assignments[matchedName];
-    resultPanel.classList.remove("hidden");
-    message.textContent = "";
-    heading.innerHTML = "Your secret<br>is revealed!";
-    copy.textContent = "Your Secret Santa assignment is:";
-    input.disabled = true;
+      const matchedName = Object.keys(assignments).find(
+        name => normalizeName(name) === normalizeName(canonicalName)
+      );
 
-    const button = document.getElementById("reveal-button");
-    button.disabled = true;
-  });
-}
+      if (!matchedName) {
+        message.textContent =
+          "Name not found. Please check your spelling and try again.";
+        resultPanel.classList.add("hidden");
+        return;
+      }
 
-// ==========================================
-// FALLING SNOW
-// ==========================================
+      recipientName.textContent = assignments[matchedName];
+      resultPanel.classList.remove("hidden");
+      message.textContent = "";
 
+      if (heading) heading.textContent = "Your secret is revealed!";
+      if (copy) copy.textContent = "Your Secret Santa assignment is:";
+
+      input.disabled = true;
+
+      const button = form.querySelector('button[type="submit"]');
+      if (button) button.disabled = true;
+    });
+  } else {
+    console.error("Secret Santa: reveal form not found in index.html");
+  }
+});
+
+// Falling snow
 const canvas = document.getElementById("snow");
 const ctx = canvas ? canvas.getContext("2d") : null;
 
 if (canvas && ctx) {
-  let width = 0;
-  let height = 0;
+  let width;
+  let height;
   let flakes = [];
 
   function resizeCanvas() {
     width = canvas.width = window.innerWidth;
     height = canvas.height = window.innerHeight;
 
-    const count = Math.min(100, Math.floor(width / 12));
-
-    flakes = Array.from({ length: count }, () => ({
-      x: Math.random() * width,
-      y: Math.random() * height,
-      radius: Math.random() * 2.5 + 0.5,
-      speed: Math.random() * 1 + 0.3,
-      drift: (Math.random() - 0.5) * 0.6
-    }));
+    flakes = Array.from(
+      { length: Math.min(100, Math.floor(width / 12)) },
+      () => ({
+        x: Math.random() * width,
+        y: Math.random() * height,
+        radius: Math.random() * 2.5 + 0.5,
+        speed: Math.random() * 1 + 0.3,
+        drift: (Math.random() - 0.5) * 0.6
+      })
+    );
   }
 
   function drawSnow() {
