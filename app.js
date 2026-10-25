@@ -1,5 +1,7 @@
 
-// SECRET SANTA ASSIGNMENTS
+// ==========================================
+// SECRET SANTA — ASSIGNMENTS
+// ==========================================
 
 const assignments = {
   "Janek": "Ludek",
@@ -23,17 +25,18 @@ const assignments = {
   "Julia": "Elif"
 };
 
+// Alternative spellings and nicknames.
+// Each value must match a name in assignments.
 const aliases = {
   "Ondřej": "Ondrej",
   "Ondra": "Ondrej",
-  "Ludek": "Ludek",
   "Luděk": "Ludek",
   "Ludvík": "Ludvik",
-  "Svetlana": "Svetlana",
   "Světlana": "Svetlana",
   "Fany": "Eva"
 };
 
+// Ignore accents, capitalisation and extra spaces.
 function normalizeName(name) {
   return name
     .normalize("NFD")
@@ -43,90 +46,101 @@ function normalizeName(name) {
     .replace(/\s+/g, " ");
 }
 
-document.addEventListener("DOMContentLoaded", () => {
-  const letter = document.getElementById("letter");
-  const envelope = document.getElementById("envelope");
-  const form = document.getElementById("reveal-form");
-  const input = document.getElementById("participant-name");
-  const message = document.getElementById("message");
-  const resultPanel = document.getElementById("reveal-panel");
-  const recipientName = document.getElementById("recipient-name");
-  const heading = document.getElementById("paper-heading");
-  const copy = document.getElementById("paper-copy");
+// ==========================================
+// ENVELOPE
+// ==========================================
 
-  // Open the envelope
-  if (envelope && letter) {
-    envelope.addEventListener("click", () => {
-      letter.classList.add("open");
-    });
-  }
+const letter = document.getElementById("letter");
+const envelope = document.getElementById("envelope");
+const revealForm = document.getElementById("reveal-form");
 
-  // Reveal the assignment
-  if (form) {
-    form.addEventListener("submit", (event) => {
-      event.preventDefault();
+if (envelope && letter) {
+  envelope.addEventListener("click", () => {
+    letter.classList.add("open");
+  });
+}
 
-      const enteredName = normalizeName(input.value);
+// ==========================================
+// REVEAL THE ASSIGNMENT
+// ==========================================
 
-      const aliasEntry = Object.entries(aliases).find(
-        ([alias]) => normalizeName(alias) === enteredName
-      );
+if (revealForm) {
+  revealForm.addEventListener("submit", (event) => {
+    event.preventDefault();
 
-      const canonicalName = aliasEntry
-        ? aliasEntry[1]
-        : input.value.trim();
+    const input = document.getElementById("participant-name");
+    const message = document.getElementById("message");
+    const resultPanel = document.getElementById("reveal-panel");
+    const recipientName = document.getElementById("recipient-name");
+    const heading = document.getElementById("paper-heading");
+    const copy = document.getElementById("paper-copy");
+    const button = document.getElementById("reveal-button");
 
-      const matchedName = Object.keys(assignments).find(
-        name => normalizeName(name) === normalizeName(canonicalName)
-      );
+    if (!input || !message || !resultPanel || !recipientName) {
+      console.error("Secret Santa: required HTML elements are missing.");
+      return;
+    }
 
-      if (!matchedName) {
-        message.textContent =
-          "Name not found. Please check your spelling and try again.";
-        resultPanel.classList.add("hidden");
-        return;
-      }
+    const enteredName = normalizeName(input.value);
 
-      recipientName.textContent = assignments[matchedName];
-      resultPanel.classList.remove("hidden");
-      message.textContent = "";
+    // Find an alias regardless of accents or capitalisation.
+    const aliasEntry = Object.entries(aliases).find(
+      ([alias]) => normalizeName(alias) === enteredName
+    );
 
-      if (heading) heading.textContent = "Your secret is revealed!";
-      if (copy) copy.textContent = "Your Secret Santa assignment is:";
+    const canonicalName = aliasEntry
+      ? aliasEntry[1]
+      : input.value.trim();
 
-      input.disabled = true;
+    // Find the participant in the draw.
+    const matchedName = Object.keys(assignments).find(
+      name => normalizeName(name) === normalizeName(canonicalName)
+    );
 
-      const button = form.querySelector('button[type="submit"]');
-      if (button) button.disabled = true;
-    });
-  } else {
-    console.error("Secret Santa: reveal form not found in index.html");
-  }
-});
+    if (!matchedName) {
+      message.textContent =
+        "Name not found. Please check the spelling and try again.";
+      resultPanel.classList.add("hidden");
+      return;
+    }
 
-// Falling snow
+    recipientName.textContent = assignments[matchedName];
+    resultPanel.classList.remove("hidden");
+    message.textContent = "";
+
+    if (heading) heading.textContent = "Your secret is revealed!";
+    if (copy) copy.textContent = "Your Secret Santa assignment is:";
+
+    input.disabled = true;
+    if (button) button.disabled = true;
+  });
+}
+
+// ==========================================
+// FALLING SNOW
+// ==========================================
+
 const canvas = document.getElementById("snow");
 const ctx = canvas ? canvas.getContext("2d") : null;
 
 if (canvas && ctx) {
-  let width;
-  let height;
+  let width = 0;
+  let height = 0;
   let flakes = [];
 
   function resizeCanvas() {
     width = canvas.width = window.innerWidth;
     height = canvas.height = window.innerHeight;
 
-    flakes = Array.from(
-      { length: Math.min(100, Math.floor(width / 12)) },
-      () => ({
-        x: Math.random() * width,
-        y: Math.random() * height,
-        radius: Math.random() * 2.5 + 0.5,
-        speed: Math.random() * 1 + 0.3,
-        drift: (Math.random() - 0.5) * 0.6
-      })
-    );
+    const count = Math.min(100, Math.floor(width / 12));
+
+    flakes = Array.from({ length: count }, () => ({
+      x: Math.random() * width,
+      y: Math.random() * height,
+      radius: Math.random() * 2.5 + 0.5,
+      speed: Math.random() * 1 + 0.3,
+      drift: (Math.random() - 0.5) * 0.6
+    }));
   }
 
   function drawSnow() {
