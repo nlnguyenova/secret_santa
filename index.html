@@ -1,54 +1,92 @@
+
 <!doctype html>
 <html lang="en">
 <head>
-  <meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1">
-  <meta name="theme-color" content="#681c30"><title>Secret Santa</title>
-  <link rel="preconnect" href="https://fonts.googleapis.com"><link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width,initial-scale=1">
+  <meta name="theme-color" content="#681c30">
+  <title>Secret Santa</title>
+
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
   <link href="https://fonts.googleapis.com/css2?family=Lora:wght@400;500;600;700&family=Raleway:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
   <link rel="stylesheet" href="./styles.css">
 </head>
 <body>
-  <canvas id="snow" aria-hidden="true"></canvas><div class="stripes" aria-hidden="true"></div>
+  <canvas id="snow" aria-hidden="true"></canvas>
+  <div class="stripes" aria-hidden="true"></div>
+
   <main class="scene">
-    <header class="masthead"><p class="kicker">SSA's</p><h1>Secret <span>Santa</span></h1><p class="subtitle">xxx</p></header>
-    <section class="letter-stage"><div class="letter" id="letter">
-      <div class="letter-back"></div>
-      <div class="letter-paper"><div class="paper-inner">
-        <p class="paper-kicker" id="paper-kicker">The organiser’s desk</p><div class="sparkle">✳</div>
-        <h2 id="paper-heading">Let the magic<br>begin.</h2>
-        <p class="paper-copy" id="paper-copy">Add everyone’s names, then make your Secret Santa draw.</p>
-        <form id="draw-form" class="lookup-form">
-          <label for="group-name" class="field-label">Group name (optional)</label><input id="group-name" maxlength="80" placeholder="Office Secret Santa 2026">
-          <label for="names" class="field-label">Participants — one name per line</label>
-          <textarea id="names" rows="5" maxlength="4000" required placeholder="Alice\nBen\nClara\nDavid\nEmma"></textarea>
-          <button type="submit" id="draw-button"><span>Generate the draw</span><span>↗</span></button>
-        </form>
-        <p class="message" id="message" role="status" aria-live="polite"></p>
-        <section id="results" class="results hidden" aria-live="polite"><h3>Your draw</h3><p class="results-note">You can see all assignments here. Copy each person’s private reveal link and send it only to them.</p><div id="assignment-list"></div><button type="button" id="copy-all" class="secondary-button">Copy all links</button><button type="button" id="new-draw" class="text-button">Start a new draw</button></section>
-        <section id="reveal-panel" class="recipient-wrap hidden"><p class="recipient-label">You’re buying a present for</p><p class="recipient" id="recipient-name"></p><p class="secret-note">Psst… keep it a secret. <span>♥</span></p></section>
-      </div></div>
-      <div id="name-entry" style="position:relative; z-index:10; text-align:center; margin:20px auto; padding:20px; background:#fff8ed; border-radius:8px; max-width:300px;">
-  <label for="participant-name" style="display:block; margin-bottom:10px; color:#681c30;">
-    Enter your name
-  </label>
-  <input
-    id="participant-name"
-    type="text"
-    placeholder="Your name"
-    style="padding:12px; width:90%; box-sizing:border-box; margin-bottom:12px;"
-  >
-  <button
-    type="button"
-    onclick="window.revealSecretSanta && window.revealSecretSanta()"
-    style="padding:12px; cursor:pointer;"
-  >
-    Reveal my recipient
-  </button>
-  <p id="name-result" style="color:#681c30;"></p>
-</div>
-      <div class="envelope"><div class="envelope-back"></div><div class="envelope-left"></div><div class="envelope-right"></div><div class="envelope-bottom"></div><div class="envelope-flap"></div><div class="wax-seal">✦</div><div class="envelope-prompt"><span>For your eyes only</span><strong>Open me</strong></div></div>
-    </div></section>
-    <p class="footnote">xxx <span>✳</span></p>
+    <header class="masthead">
+      <p class="kicker">SSA's</p>
+      <h1>Secret <span>Santa</span></h1>
+      <p class="subtitle">A little Christmas magic</p>
+    </header>
+
+    <section class="letter-stage">
+      <div class="letter" id="letter">
+        <div class="letter-back"></div>
+
+        <div class="letter-paper">
+          <div class="paper-inner">
+            <p class="paper-kicker">The secret letter</p>
+            <div class="sparkle">✳</div>
+
+            <h2 id="paper-heading">Who's your<br>Secret Santa?</h2>
+
+            <p class="paper-copy" id="paper-copy">
+              Enter your name to discover who you're buying a present for.
+            </p>
+
+            <form id="reveal-form" class="lookup-form">
+              <label for="participant-name" class="field-label">
+                Your name
+              </label>
+
+              <input
+                id="participant-name"
+                name="name"
+                type="text"
+                maxlength="80"
+                autocomplete="off"
+                required
+                placeholder="Enter your name"
+              >
+
+              <button type="submit" id="reveal-button">
+                <span>Reveal my recipient</span>
+                <span>↗</span>
+              </button>
+            </form>
+
+            <p class="message" id="message" role="status" aria-live="polite"></p>
+
+            <section id="reveal-panel" class="recipient-wrap hidden" aria-live="polite">
+              <p class="recipient-label">You're buying a present for</p>
+              <p class="recipient" id="recipient-name"></p>
+              <p class="secret-note">Psst… keep it a secret. <span>♥</span></p>
+            </section>
+          </div>
+        </div>
+
+        <div class="envelope" id="envelope">
+          <div class="envelope-back"></div>
+          <div class="envelope-left"></div>
+          <div class="envelope-right"></div>
+          <div class="envelope-bottom"></div>
+          <div class="envelope-flap"></div>
+          <div class="wax-seal">✦</div>
+          <div class="envelope-prompt">
+            <span>For your eyes only</span>
+            <strong>Open me</strong>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <p class="footnote">Made with a little Christmas magic <span>✳</span></p>
   </main>
+
   <script src="./app.js" defer></script>
-</body></html>
+</body>
+</html>
