@@ -5,11 +5,36 @@
 // ==========================================
 
 const assignments = {
-  "Alice Test": "Clara Test",
-  "Ben Test": "Emma Test",
-  "Clara Test": "David Test",
-  "David Test": "Alice Test",
-  "Emma Test": "Ben Test"
+  "Janek": "Ludek",
+  "Ludvik": "Eva",
+  "Ondrej": "Imge",
+  "Svetlana": "Petr",
+  "Valerie": "Marie",
+  "Marie": "Yuliya",
+  "Sabina": "Jasper",
+  "Lan": "Pepa",
+  "Jirka": "Svetlana",
+  "Pepa": "Andreas",
+  "Elif": "Lan",
+  "Imge": "Julia",
+  "Yuliya": "Janek",
+  "Petr": "Sabina",
+  "Eva": "Ondrej",
+  "Jasper": "Ludvik",
+  "Andreas": "Valerie",
+  "Ludek": "Jirka",
+  "Julia": "Elif"
+};
+
+const aliases = {
+  "Ondřej": "Ondrej",
+  "Ondřej": "Ondra",
+  "Luděk": "Ludek", 
+  "Ludvík": "Ludvik",
+  "Luděk": "Ludek",
+  "Svetlana": "Světlana",
+  "Eva": "Fany",
+};
 };
 
 // ==========================================
