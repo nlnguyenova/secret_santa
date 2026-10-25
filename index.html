@@ -27,6 +27,25 @@
         <section id="results" class="results hidden" aria-live="polite"><h3>Your draw</h3><p class="results-note">You can see all assignments here. Copy each person’s private reveal link and send it only to them.</p><div id="assignment-list"></div><button type="button" id="copy-all" class="secondary-button">Copy all links</button><button type="button" id="new-draw" class="text-button">Start a new draw</button></section>
         <section id="reveal-panel" class="recipient-wrap hidden"><p class="recipient-label">You’re buying a present for</p><p class="recipient" id="recipient-name"></p><p class="secret-note">Psst… keep it a secret. <span>♥</span></p></section>
       </div></div>
+      <div id="name-entry" style="position:relative; z-index:10; text-align:center; margin:20px auto; padding:20px; background:#fff8ed; border-radius:8px; max-width:300px;">
+  <label for="participant-name" style="display:block; margin-bottom:10px; color:#681c30;">
+    Enter your name
+  </label>
+  <input
+    id="participant-name"
+    type="text"
+    placeholder="Your name"
+    style="padding:12px; width:90%; box-sizing:border-box; margin-bottom:12px;"
+  >
+  <button
+    type="button"
+    onclick="window.revealSecretSanta && window.revealSecretSanta()"
+    style="padding:12px; cursor:pointer;"
+  >
+    Reveal my recipient
+  </button>
+  <p id="name-result" style="color:#681c30;"></p>
+</div>
       <div class="envelope"><div class="envelope-back"></div><div class="envelope-left"></div><div class="envelope-right"></div><div class="envelope-bottom"></div><div class="envelope-flap"></div><div class="wax-seal">✦</div><div class="envelope-prompt"><span>For your eyes only</span><strong>Open me</strong></div></div>
     </div></section>
     <p class="footnote">xxx <span>✳</span></p>
